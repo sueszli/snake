@@ -1,0 +1,1 @@
+usage: uv run snake.py --cli --runs 5
