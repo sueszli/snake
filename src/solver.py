@@ -6,42 +6,42 @@ from pathfinding import a_star_search, count_reachable_cells
 
 def get_next_direction(game: GameState) -> Optional[str]:
     """
-    A solver that uses A* to find the shortest path to the fruit,
-    with a fallback to a Hamiltonian cycle to avoid getting trapped.
+    a solver that uses a* to find the shortest path to the fruit,
+    with a fallback to a hamiltonian cycle to avoid getting trapped.
     """
     head = game.snake[0]
     fruit = game.fruit
 
-    # 1. A* search for the shortest path to the fruit
+    # 1. a* search for the shortest path to the fruit
     path_to_fruit = a_star_search(game, head, fruit)
 
     if path_to_fruit and len(path_to_fruit) > 1:
-        # 2. Safety check: after eating the fruit, is the board partitioned?
-        # Create a temporary game state to simulate the move
+        # 2. safety check: after eating the fruit, is the board partitioned?
+        # create a temporary game state to simulate the move
         temp_snake = list(game.snake)
         temp_snake.insert(0, path_to_fruit[1])
         if path_to_fruit[1] == fruit:  # it will eat the fruit
-            pass  # The tail is not removed
+            pass  # the tail is not removed
         else:
             temp_snake.pop()
 
         temp_game_state = GameState(
             snake=tuple(temp_snake),
             fruit=game.fruit,
-            direction=game.direction,  # This is not used by A*
+            direction=game.direction,  # this is not used by a*
             score=game.score,
             term_width=game.term_width,
             term_height=game.term_height,
         )
 
-        # Count total empty cells
+        # count total empty cells
         total_empty_cells = (game.term_width - 2) * (game.term_height - 2) - len(temp_game_state.snake)
 
-        # Count cells reachable from the new head
+        # count cells reachable from the new head
         reachable_cells = count_reachable_cells(temp_game_state, temp_game_state.snake[0])
 
         if reachable_cells >= len(temp_game_state.snake):
-            # If the move is safe, take the step
+            # if the move is safe, take the step
             next_move = path_to_fruit[1]
             if next_move[0] > head[0]:
                 return "KEY_RIGHT"
@@ -52,57 +52,57 @@ def get_next_direction(game: GameState) -> Optional[str]:
             elif next_move[1] < head[1]:
                 return "KEY_UP"
 
-    # 3. Fallback to Hamiltonian cycle if no safe path to fruit is found
+    # 3. fallback to hamiltonian cycle if no safe path to fruit is found
     return hamiltonian_cycle(game)
 
 
 def hamiltonian_cycle(game: GameState) -> Optional[str]:
     """
-    A solver that follows a pre-defined Hamiltonian cycle on the grid.
-    This ensures the snake covers all cells without collision, running
+    a solver that follows a pre-defined hamiltonian cycle on the grid.
+    this ensures the snake covers all cells without collision, running
     perpetually until it fills the entire board.
-    The algorithm is designed for a grid with an even width.
+    the algorithm is designed for a grid with an even width.
     """
     head_x, head_y = game.snake[0]
     direction = game.direction
     width = game.term_width - 2
     height = game.term_height - 2
 
-    # This algorithm for a Hamiltonian cycle requires the grid width to be even.
+    # this algorithm for a hamiltonian cycle requires the grid width to be even.
     if width % 2 != 0:
-        # Fallback for odd width grids. A different algorithm would be needed.
+        # fallback for odd width grids. a different algorithm would be needed.
         return "KEY_RIGHT"
 
-    # Determine the target direction based on the Hamiltonian cycle path.
+    # determine the target direction based on the hamiltonian cycle path.
     target_direction = None
     if head_y == 1:
         if head_x > 1:
             target_direction = "KEY_LEFT"
         else:  # at (1,1)
             target_direction = "KEY_DOWN"
-    elif head_x == width:  # Last column
+    elif head_x == width:  # last column
         if head_y > 1:
             target_direction = "KEY_UP"
         else:  # at (width, 1)
             target_direction = "KEY_LEFT"
-    elif head_y == height:  # Bottom row
+    elif head_y == height:  # bottom row
         if head_x % 2 != 0:
             target_direction = "KEY_RIGHT"
         else:
             target_direction = "KEY_UP"
-    elif head_x % 2 != 0:  # Odd columns
+    elif head_x % 2 != 0:  # odd columns
         target_direction = "KEY_DOWN"
-    elif head_x % 2 == 0:  # Even columns
+    elif head_x % 2 == 0:  # even columns
         if head_y > 2:
             target_direction = "KEY_UP"
         else:  # at y=2
             target_direction = "KEY_RIGHT"
 
-    # If the snake's current direction is opposite to the target direction
+    # if the snake's current direction is opposite to the target direction
     # (e.g., at the start), choose an alternate move to get onto the cycle.
     if (direction == "KEY_RIGHT" and target_direction == "KEY_LEFT") or (direction == "KEY_LEFT" and target_direction == "KEY_RIGHT") or (direction == "KEY_UP" and target_direction == "KEY_DOWN") or (direction == "KEY_DOWN" and target_direction == "KEY_UP"):
-        # Try to move down first, then up, to join the cycle path.
-        next_x, next_y = head_x, head_y + 1  # Try down
+        # try to move down first, then up, to join the cycle path.
+        next_x, next_y = head_x, head_y + 1  # try down
         if (next_x, next_y) not in game.snake and next_y <= height:
             return "KEY_DOWN"
         else:
