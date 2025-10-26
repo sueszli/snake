@@ -38,10 +38,7 @@ def update_state(game, key, term):
     # Eat fruit
     if game["snake"][0] == game["fruit"]:
         game["score"] += 1
-        game["fruit"] = (
-            random.randint(0, term.width - 1),
-            random.randint(0, term.height - 1),
-        )
+        game["fruit"] = (random.randint(0, term.width - 1), random.randint(0, term.height - 1))
     else:
         game["snake"].pop()
 
@@ -49,14 +46,13 @@ def update_state(game, key, term):
 
 
 def render(term, game):
-    # Clear screen
     print(term.home + term.clear)
 
-    # Draw snake
+    # snake
     for x, y in game["snake"]:
         print(term.move_xy(x, y) + "█")
 
-    # Draw fruit
+    # fruit
     print(term.move_xy(game["fruit"][0], game["fruit"][1]) + "ó")
 
 
