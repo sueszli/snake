@@ -111,7 +111,7 @@ def cli_game_loop(initial_game_state: GameState) -> Tuple[GameState, int]:
 
 def main():
     parser = argparse.ArgumentParser(description="run the snake game.")
-    parser.add_argument("--cli", action="store_true", help="run in CLI mode without graphics.")
+    parser.add_argument("--cli", action="store_true", help="run in cli mode without graphics.")
     parser.add_argument("--runs", type=int, default=1, help="number of times to run the game.")
     args = parser.parse_args()
 
