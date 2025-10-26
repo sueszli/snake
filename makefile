@@ -1,7 +1,7 @@
 .PHONY: venv # create virtual environment
 venv:
 	uv venv
-	uv pip install blessed
+	uv pip install -r requirements.in
 	@echo "activate venv with: \033[1;33msource .venv/bin/activate\033[0m"
 
 .PHONY: lock # freeze dependencies
