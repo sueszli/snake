@@ -1,6 +1,6 @@
 from typing import Optional
 
-from gametypes import GameState
+from state import GameState
 from pathfinding import a_star_search, count_reachable_cells
 
 

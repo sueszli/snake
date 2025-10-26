@@ -12,7 +12,7 @@ from typing import Optional, Tuple
 
 import blessed
 
-from gametypes import GameState
+from state import GameState
 from solver import get_next_direction
 
 
