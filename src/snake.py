@@ -12,8 +12,8 @@ from typing import Optional, Tuple
 
 import blessed
 
-from state import GameState
 from solver import get_next_direction
+from state import GameState
 
 
 def update_game_state(game: GameState) -> Optional[GameState]:

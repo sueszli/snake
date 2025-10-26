@@ -1,7 +1,7 @@
 from typing import Optional
 
+from utils import a_star_search, count_reachable_cells
 from state import GameState
-from pathfinding import a_star_search, count_reachable_cells
 
 
 def get_next_direction(game: GameState) -> Optional[str]:

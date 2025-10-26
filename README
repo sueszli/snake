@@ -1,4 +1,4 @@
-this repository benchmarks different algorithms to beat the classic snake game in a simple manner, created in collaboration with benjamin from tufalabs.ai.
+a simple benchmarking suite to evaluate different snake game solvers.
+created with @pinouchon from tufalabs.ai.
 
-pip install uv
-uv run src/snake.py --cli --runs 5
+usage: `uv run src/snake.py --cli --runs 5`

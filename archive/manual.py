@@ -14,12 +14,12 @@ import blessed
 def update_state(game, term):
     new_head = move_snake(game)
 
-    # Game over conditions
+    # game over conditions
     body = game["snake"][1:]
     has_collision_with_self = new_head in body
     has_collision_with_wall = not (1 <= new_head[0] < term.width - 1 and 1 <= new_head[1] < term.height - 1)
     if has_collision_with_self or has_collision_with_wall:
-        return None  # Signal game over
+        return None
 
     game["snake"].insert(0, new_head)
 
@@ -52,7 +52,7 @@ def handle_fruit_eating(game, term):
 def render(term, game):
     print(term.home + term.clear, end="")
 
-    # Draw border
+    # draw border
     print(term.move_xy(0, 0) + "┌" + "─" * (term.width - 2) + "┐")
     for y in range(1, term.height - 1):
         print(term.move_xy(0, y) + "│", end="")
@@ -72,7 +72,7 @@ def game_loop(term, game):
     with term.cbreak(), term.hidden_cursor():
         val = ""
         while val.lower() != "q":
-            # handle input
+            # process input
             val = term.inkey(timeout=0)
             if val.is_sequence:
                 game["direction"] = val.name
