@@ -4,6 +4,7 @@
 #     "blessed==1.20.0",
 # ]
 # ///
+import argparse
 import random
 import sys
 import time
@@ -80,19 +81,39 @@ def game_loop(term: blessed.Terminal, initial_game_state: GameState):
     return last_game_state
 
 
+def cli_game_loop(initial_game_state: GameState):
+    game = initial_game_state
+    last_game_state = initial_game_state
+    while game:
+        last_game_state = game
+        game = update_game_state(game)
+    return last_game_state
+
+
 def main():
+    parser = argparse.ArgumentParser(description="run the snake game.")
+    parser.add_argument("--cli", action="store_true", help="run in CLI mode without graphics.")
+    args = parser.parse_args()
+
+    if args.cli:
+        term_width = 50
+        term_height = 20
+        snake = tuple((term_width // 2 - i, term_height // 2) for i in range(3))
+        all_cells = set((x, y) for x in range(1, term_width - 1) for y in range(1, term_height - 1))
+        valid_fruit_cells = all_cells - set(snake)
+        fruit = random.choice(list(valid_fruit_cells))
+        initial_game_state = GameState(snake=snake, fruit=fruit, direction="KEY_RIGHT", score=0, term_width=term_width, term_height=term_height)
+        final_game_state = cli_game_loop(initial_game_state)
+        print(f"Max score: {final_game_state.score}")
+        exit(0)
+
     term = blessed.Terminal()
-
     snake = tuple((term.width // 2 - i, term.height // 2) for i in range(3))
-
     all_cells = set((x, y) for x in range(1, term.width - 1) for y in range(1, term.height - 1))
     valid_fruit_cells = all_cells - set(snake)
     fruit = random.choice(list(valid_fruit_cells))
-
     initial_game_state = GameState(snake=snake, fruit=fruit, direction="KEY_RIGHT", score=0, term_width=term.width, term_height=term.height)
-
     final_game_state = game_loop(term, initial_game_state)
-
     print(term.home + term.clear)
     score = final_game_state.score
     msg = f"Game Over! Score: {score}"
