@@ -1,9 +1,62 @@
 from typing import Optional
 
 from gametypes import GameState
+from pathfinding import a_star_search, count_reachable_cells
 
 
 def get_next_direction(game: GameState) -> Optional[str]:
+    """
+    A solver that uses A* to find the shortest path to the fruit,
+    with a fallback to a Hamiltonian cycle to avoid getting trapped.
+    """
+    head = game.snake[0]
+    fruit = game.fruit
+
+    # 1. A* search for the shortest path to the fruit
+    path_to_fruit = a_star_search(game, head, fruit)
+
+    if path_to_fruit and len(path_to_fruit) > 1:
+        # 2. Safety check: after eating the fruit, is the board partitioned?
+        # Create a temporary game state to simulate the move
+        temp_snake = list(game.snake)
+        temp_snake.insert(0, path_to_fruit[1])
+        if path_to_fruit[1] == fruit:  # it will eat the fruit
+            pass  # The tail is not removed
+        else:
+            temp_snake.pop()
+
+        temp_game_state = GameState(
+            snake=tuple(temp_snake),
+            fruit=game.fruit,
+            direction=game.direction,  # This is not used by A*
+            score=game.score,
+            term_width=game.term_width,
+            term_height=game.term_height,
+        )
+
+        # Count total empty cells
+        total_empty_cells = (game.term_width - 2) * (game.term_height - 2) - len(temp_game_state.snake)
+
+        # Count cells reachable from the new head
+        reachable_cells = count_reachable_cells(temp_game_state, temp_game_state.snake[0])
+
+        if reachable_cells >= len(temp_game_state.snake):
+            # If the move is safe, take the step
+            next_move = path_to_fruit[1]
+            if next_move[0] > head[0]:
+                return "KEY_RIGHT"
+            elif next_move[0] < head[0]:
+                return "KEY_LEFT"
+            elif next_move[1] > head[1]:
+                return "KEY_DOWN"
+            elif next_move[1] < head[1]:
+                return "KEY_UP"
+
+    # 3. Fallback to Hamiltonian cycle if no safe path to fruit is found
+    return hamiltonian_cycle(game)
+
+
+def hamiltonian_cycle(game: GameState) -> Optional[str]:
     """
     A solver that follows a pre-defined Hamiltonian cycle on the grid.
     This ensures the snake covers all cells without collision, running
