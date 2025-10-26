@@ -8,7 +8,7 @@ import argparse
 import random
 import sys
 import time
-from typing import Optional
+from typing import Optional, Tuple
 
 import blessed
 
@@ -83,8 +83,9 @@ def game_loop(term: blessed.Terminal, initial_game_state: GameState):
     return last_game_state
 
 
-def cli_game_loop(initial_game_state: GameState):
+def cli_game_loop(initial_game_state: GameState) -> Tuple[GameState, int]:
     game = initial_game_state
+    steps = 0
     last_game_state = initial_game_state
     steps_since_last_fruit = 0
 
@@ -92,6 +93,7 @@ def cli_game_loop(initial_game_state: GameState):
         last_game_state = game
         prev_score = game.score
         game = update_game_state(game)
+        steps += 1
 
         if not game:
             break
@@ -104,7 +106,7 @@ def cli_game_loop(initial_game_state: GameState):
         live_lock = steps_since_last_fruit > (initial_game_state.term_width - 2) * (initial_game_state.term_height - 2) * 2
         if live_lock:
             break
-    return last_game_state
+    return last_game_state, steps
 
 
 def main():
@@ -115,6 +117,7 @@ def main():
 
     if args.cli:
         total_score = 0
+        total_steps = 0
         for _ in range(args.runs):
             term_width = 20
             term_height = 20
@@ -123,11 +126,12 @@ def main():
             valid_fruit_cells = all_cells - set(snake)
             fruit = random.choice(list(valid_fruit_cells))
             initial_game_state = GameState(snake=snake, fruit=fruit, direction="KEY_RIGHT", score=0, term_width=term_width, term_height=term_height)
-            final_game_state = cli_game_loop(initial_game_state)
+            final_game_state, steps = cli_game_loop(initial_game_state)
             total_score += final_game_state.score
-            max_size = (term_width - 2) * (term_height - 2)
+            total_steps += steps
         max_score = (term_width - 2) * (term_height - 2) - 3
         print(f"Average score: {total_score / args.runs}/{float(max_score)}")
+        print(f"Average steps: {total_steps / args.runs}")
         exit(0)
 
     term = blessed.Terminal()
