@@ -21,6 +21,10 @@ def update_game_state(game: GameState) -> Optional[GameState]:
     if direction is None:
         return None
 
+    illegal_turns = {"KEY_LEFT": "KEY_RIGHT", "KEY_RIGHT": "KEY_LEFT", "KEY_UP": "KEY_DOWN", "KEY_DOWN": "KEY_UP"}
+    if illegal_turns.get(game.direction) == direction:
+        direction = game.direction
+
     head_x, head_y = game.snake[0]
     if direction == "KEY_LEFT":
         head_x -= 1
@@ -109,23 +113,28 @@ def cli_game_loop(initial_game_state: GameState) -> Tuple[GameState, int]:
     return last_game_state, steps
 
 
+def init_game_state(term_width: int, term_height: int) -> GameState:
+    snake = tuple((term_width // 2 - i, term_height // 2) for i in range(3))
+    all_cells = set((x, y) for x in range(1, term_width - 1) for y in range(1, term_height - 1))
+    valid_fruit_cells = all_cells - set(snake)
+    fruit = random.choice(list(valid_fruit_cells))
+    return GameState(snake=snake, fruit=fruit, direction="KEY_RIGHT", score=0, term_width=term_width, term_height=term_height)
+
+
 def main():
     parser = argparse.ArgumentParser(description="run the snake game.")
     parser.add_argument("--cli", action="store_true", help="run in cli mode without graphics.")
     parser.add_argument("--runs", type=int, default=1, help="number of times to run the game.")
     args = parser.parse_args()
 
+    # silent mode for benchmarking
     if args.cli:
         total_score = 0
         total_steps = 0
+        term_width = 20
+        term_height = 20
         for _ in range(args.runs):
-            term_width = 20
-            term_height = 20
-            snake = tuple((term_width // 2 - i, term_height // 2) for i in range(3))
-            all_cells = set((x, y) for x in range(1, term_width - 1) for y in range(1, term_height - 1))
-            valid_fruit_cells = all_cells - set(snake)
-            fruit = random.choice(list(valid_fruit_cells))
-            initial_game_state = GameState(snake=snake, fruit=fruit, direction="KEY_RIGHT", score=0, term_width=term_width, term_height=term_height)
+            initial_game_state = init_game_state(term_width, term_height)
             final_game_state, steps = cli_game_loop(initial_game_state)
             total_score += final_game_state.score
             total_steps += steps
@@ -134,12 +143,9 @@ def main():
         print(f"Average steps: {total_steps / args.runs}")
         exit(0)
 
+    # graphical mode for debugging
     term = blessed.Terminal()
-    snake = tuple((term.width // 2 - i, term.height // 2) for i in range(3))
-    all_cells = set((x, y) for x in range(1, term.width - 1) for y in range(1, term.height - 1))
-    valid_fruit_cells = all_cells - set(snake)
-    fruit = random.choice(list(valid_fruit_cells))
-    initial_game_state = GameState(snake=snake, fruit=fruit, direction="KEY_RIGHT", score=0, term_width=term.width, term_height=term.height)
+    initial_game_state = init_game_state(term.width, term.height)
     final_game_state = game_loop(term, initial_game_state)
     print(term.home + term.clear)
     score = final_game_state.score

@@ -4,15 +4,12 @@ from typing import List, Optional, Tuple
 from state import GameState
 
 
-def heuristic(a: Tuple[int, int], b: Tuple[int, int]) -> int:
+def dist(a: Tuple[int, int], b: Tuple[int, int]) -> int:
     """calculates the manhattan distance between two points."""
     return abs(a[0] - b[0]) + abs(a[1] - b[1])
 
 
 def a_star_search(game: GameState, start: Tuple[int, int], goal: Tuple[int, int]) -> Optional[List[Tuple[int, int]]]:
-    """
-    a* search algorithm to find the shortest path from start to goal.
-    """
     width = game.term_width - 2
     height = game.term_height - 2
 
@@ -24,18 +21,16 @@ def a_star_search(game: GameState, start: Tuple[int, int], goal: Tuple[int, int]
     open_set = [(0, start)]  # (f_score, node)
 
     # for each node, which node it can most efficiently be reached from.
-    # if a node can be reached from many nodes, came_from will eventually contain the
-    # most efficient previous step.
+    # if a node can be reached from many nodes, came_from will eventually contain the most efficient previous step.
     came_from = {}
 
     # for each node, the cost of getting from the start node to that node.
     g_score = {(x, y): float("inf") for x in range(1, width + 1) for y in range(1, height + 1)}
     g_score[start] = 0
 
-    # for each node, the total cost of getting from the start node to the goal
-    # by passing by that node. that value is partly known, partly heuristic.
+    # for each node, the total cost of getting from the start node to the goal by passing by that node. that value is partly known, partly heuristic.
     f_score = {(x, y): float("inf") for x in range(1, width + 1) for y in range(1, height + 1)}
-    f_score[start] = heuristic(start, goal)
+    f_score[start] = dist(start, goal)
 
     while open_set:
         _, current = heapq.heappop(open_set)
@@ -69,7 +64,7 @@ def a_star_search(game: GameState, start: Tuple[int, int], goal: Tuple[int, int]
             if tentative_g_score < g_score.get(neighbor, float("inf")):
                 came_from[neighbor] = current
                 g_score[neighbor] = tentative_g_score
-                f_score[neighbor] = g_score[neighbor] + heuristic(neighbor, goal)
+                f_score[neighbor] = g_score[neighbor] + dist(neighbor, goal)
                 if (f_score[neighbor], neighbor) not in open_set:
                     heapq.heappush(open_set, (f_score[neighbor], neighbor))
 

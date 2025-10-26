@@ -1,4 +1,14 @@
-a simple benchmarking suite to evaluate different snake game solvers.
+a tiny benchmarking suite for the classic snake game.
 created with @pinouchon from tufalabs.ai.
 
-usage: `uv run src/snake.py --cli --runs 5`
+             ____
+            / . .\
+            \  ---<
+             \  /
+   __________/ /
+-=:___________/
+
+usage:
+
+   $ uv run src/snake.py --cli --runs 5`
+   $ uv run --with pytest pytest test
