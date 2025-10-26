@@ -5,4 +5,4 @@ code style advice:
 - do not make functions too small
 - try to seperate logic pieces from data pieces
 
-test your algorithm with `$ uv run snake.py --cli`
+run it once with `$ uv run snake.py --cli --runs 5`

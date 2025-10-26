@@ -1,4 +1,5 @@
 import heapq
+from collections import deque
 from typing import List, Optional, Set, Tuple
 
 from gametypes import GameState, heuristic
@@ -47,6 +48,36 @@ def find_path(start: Tuple[int, int], end: Tuple[int, int], obstacles: Set[Tuple
     return None
 
 
+def find_longest_path(start: Tuple[int, int], obstacles: Set[Tuple[int, int]], width: int, height: int) -> Optional[List[str]]:
+    # finds the longest path from a given point to any reachable cell
+    longest_path = []
+    q = deque([(start, [])])
+    visited = {start}
+
+    while q:
+        current, path = q.popleft()
+
+        # Check if this path is a dead end
+        is_dead_end = True
+        for dx, dy, direction in [(0, 1, "KEY_DOWN"), (0, -1, "KEY_UP"), (1, 0, "KEY_RIGHT"), (-1, 0, "KEY_LEFT")]:
+            nx, ny = current[0] + dx, current[1] + dy
+            if 1 <= nx < width - 1 and 1 <= ny < height - 1 and (nx, ny) not in obstacles and (nx, ny) not in visited:
+                is_dead_end = False
+                break
+
+        if is_dead_end and len(path) > len(longest_path):
+            longest_path = path
+
+        for dx, dy, direction in [(0, 1, "KEY_DOWN"), (0, -1, "KEY_UP"), (1, 0, "KEY_RIGHT"), (-1, 0, "KEY_LEFT")]:
+            nx, ny = current[0] + dx, current[1] + dy
+            if 1 <= nx < width - 1 and 1 <= ny < height - 1 and (nx, ny) not in obstacles and (nx, ny) not in visited:
+                visited.add((nx, ny))
+                new_path = path + [direction]
+                q.append(((nx, ny), new_path))
+
+    return longest_path
+
+
 def get_next_direction(game: GameState) -> Optional[str]:
     obstacles = set(game.snake)
     path_to_fruit = find_path(game.snake[0], game.fruit, obstacles, game.term_width, game.term_height)
@@ -80,21 +111,9 @@ def get_next_direction(game: GameState) -> Optional[str]:
         if path_to_tail:
             return path_to_tail[0]
 
-    # last resort: try any valid move
-    head = game.snake[0]
-    x, y = head
-    for new_direction in ["KEY_UP", "KEY_DOWN", "KEY_LEFT", "KEY_RIGHT"]:
-        next_x, next_y = x, y
-        if new_direction == "KEY_LEFT":
-            next_x -= 1
-        elif new_direction == "KEY_RIGHT":
-            next_x += 1
-        elif new_direction == "KEY_UP":
-            next_y -= 1
-        elif new_direction == "KEY_DOWN":
-            next_y += 1
-
-        if (next_x, next_y) not in obstacles and (1 <= next_x < game.term_width - 1 and 1 <= next_y < game.term_height - 1):
-            return new_direction
+    # last resort: find the longest path
+    path_to_longest = find_longest_path(game.snake[0], obstacles, game.term_width, game.term_height)
+    if path_to_longest:
+        return path_to_longest[0]
 
     return None
