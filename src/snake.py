@@ -133,13 +133,15 @@ def main():
         total_steps = 0
         term_width = 20
         term_height = 20
+        max_score = float((term_width - 2) * (term_height - 2) - 3)
         for _ in range(args.runs):
             initial_game_state = init_game_state(term_width, term_height)
             final_game_state, steps = cli_game_loop(initial_game_state)
             total_score += final_game_state.score
             total_steps += steps
-        max_score = (term_width - 2) * (term_height - 2) - 3
-        print(f"Average score: {total_score / args.runs}/{float(max_score)}")
+            assert avg_score == max_score, f"incorrect solution: only got {final_game_state.score}/{max_score}"
+        avg_score = total_score / args.runs
+        print(f"Average score: {avg_score}/{max_score}")
         print(f"Average steps: {total_steps / args.runs}")
         exit(0)
 

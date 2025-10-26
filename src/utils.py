@@ -5,7 +5,7 @@ from state import GameState
 
 
 def dist(a: Tuple[int, int], b: Tuple[int, int]) -> int:
-    """calculates the manhattan distance between two points."""
+    # calculates the manhattan distance between two points
     return abs(a[0] - b[0]) + abs(a[1] - b[1])
 
 
@@ -72,9 +72,7 @@ def a_star_search(game: GameState, start: Tuple[int, int], goal: Tuple[int, int]
 
 
 def count_reachable_cells(game: GameState, start: Tuple[int, int]) -> int:
-    """
-    counts the number of reachable cells from a starting point using bfs.
-    """
+    # counts the number of reachable cells from a starting point using bfs.
     width = game.term_width - 2
     height = game.term_height - 2
     q = [start]

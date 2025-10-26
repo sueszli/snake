@@ -15,6 +15,23 @@ def test_dist():
     assert dist((1, 1), (1, 5)) == 4
 
 
+def test_dist_negative_coordinates():
+    assert dist((-5, -5), (5, 5)) == 20
+    assert dist((-1, 0), (1, 0)) == 2
+    assert dist((0, -3), (0, 3)) == 6
+
+
+def test_dist_symmetric():
+    assert dist((1, 2), (5, 7)) == dist((5, 7), (1, 2))
+    assert dist((0, 0), (10, 10)) == dist((10, 10), (0, 0))
+
+
+def test_dist_single_axis():
+    assert dist((5, 0), (10, 0)) == 5
+    assert dist((0, 3), (0, 8)) == 5
+    assert dist((2, 2), (2, 2)) == 0
+
+
 def test_a_star_basic_path():
     game = GameState(snake=((2, 2),), fruit=(4, 4), direction="KEY_RIGHT", score=0, term_width=7, term_height=7)
 
@@ -84,6 +101,41 @@ def test_count_reachable_cells_with_snake():
     assert count_left < 25
     assert count_right < 25
     assert count_left + count_right == 25 - len(snake)
+
+
+def test_count_reachable_cells_single_cell():
+    game = GameState(snake=((2, 2),), fruit=(5, 5), direction="KEY_RIGHT", score=0, term_width=4, term_height=4)
+
+    count = count_reachable_cells(game, (1, 1))
+    assert count == 3
+
+
+def test_count_reachable_cells_large_snake():
+    snake = ((1, 1), (2, 1), (3, 1), (4, 1), (5, 1), (5, 2), (5, 3), (4, 3), (3, 3), (2, 3))
+
+    game = GameState(snake=snake, fruit=(5, 5), direction="KEY_RIGHT", score=9, term_width=8, term_height=8)
+
+    count = count_reachable_cells(game, (1, 2))
+    expected = (6 * 6) - len(snake)
+    assert count <= expected
+
+
+def test_count_reachable_cells_corner():
+    snake = ((3, 3),)
+
+    game = GameState(snake=snake, fruit=(5, 5), direction="KEY_RIGHT", score=0, term_width=7, term_height=7)
+
+    count_from_corner = count_reachable_cells(game, (1, 1))
+    assert count_from_corner == 24
+
+
+def test_count_reachable_cells_isolated():
+    snake = ((1, 2), (2, 2), (3, 2), (3, 1), (3, 3))
+
+    game = GameState(snake=snake, fruit=(5, 5), direction="KEY_RIGHT", score=4, term_width=6, term_height=6)
+
+    count = count_reachable_cells(game, (1, 1))
+    assert count == 2
 
 
 def test_a_star_corner_to_corner():
