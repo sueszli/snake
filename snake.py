@@ -6,15 +6,12 @@
 # ///
 import random
 import sys
+import time
 
 import blessed
 
 
-def update_state(game, key, term):
-    # Update direction based on key press
-    if key.is_sequence:
-        game["direction"] = key.name
-
+def update_state(game, term):
     new_head = move_snake(game)
 
     # Game over conditions
@@ -32,7 +29,6 @@ def update_state(game, key, term):
 
 
 def move_snake(game):
-    """Moves the snake according to its direction and returns the new head position."""
     head_x, head_y = game["snake"][0]
     if game["direction"] == "KEY_LEFT":
         head_x -= 1
@@ -46,7 +42,6 @@ def move_snake(game):
 
 
 def handle_fruit_eating(game, term):
-    """Handles the logic for the snake eating the fruit."""
     if game["snake"][0] == game["fruit"]:
         game["score"] += 1
         game["fruit"] = (random.randint(1, term.width - 2), random.randint(1, term.height - 2))
@@ -73,9 +68,30 @@ def render(term, game):
     sys.stdout.flush()
 
 
+def game_loop(term, game):
+    with term.cbreak(), term.hidden_cursor():
+        val = ""
+        while val.lower() != "q":
+            # handle input
+            val = term.inkey(timeout=0)
+            if val.is_sequence:
+                game["direction"] = val.name
+
+            # update state
+            game = update_state(game, term)
+            if game is None:
+                break
+
+            # render
+            render(term, game)
+
+            time.sleep(0.1)  # game speed
+
+    return game
+
+
 def main():
     term = blessed.Terminal()
-
     game = {
         "snake": [(term.width // 2 - i, term.height // 2) for i in range(7)],
         "fruit": (random.randint(1, term.width - 2), random.randint(1, term.height - 2)),
@@ -83,18 +99,12 @@ def main():
         "score": 0,
     }
 
-    with term.cbreak(), term.hidden_cursor():
-        val = ""
-        while val.lower() != "q":
-            render(term, game)
-            val = term.inkey(timeout=0.1)  # game speed
-            game = update_state(game, val, term)
-            if game is None:
-                break
+    final_game_state = game_loop(term, game)
 
     # "game over" screen
     print(term.home + term.clear)
-    msg = f"Game Over! Score: {game['score'] if game else 0}"
+    score = final_game_state["score"] if final_game_state else 0
+    msg = f"Game Over! Score: {score}"
     print(term.move_xy(term.width // 2 - len(msg) // 2, term.height // 2) + msg)
 
 
