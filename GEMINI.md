@@ -6,3 +6,5 @@ code style advice:
 - try to seperate logic pieces from data pieces
 
 run it once with `$ uv run snake.py --cli --runs 5`
+
+you want to minimize the number of steps taken to reach the goal and never reach less than the max possible score
