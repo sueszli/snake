@@ -1,7 +1,7 @@
 import heapq
 from typing import List, Optional, Tuple
 
-from gametypes import GameState
+from state import GameState
 
 
 def heuristic(a: Tuple[int, int], b: Tuple[int, int]) -> int:
