@@ -5,7 +5,7 @@ from gametypes import GameState, heuristic
 
 
 def find_path(start: Tuple[int, int], end: Tuple[int, int], obstacles: Set[Tuple[int, int]], width: int, height: int) -> Optional[List[str]]:
-    """finds the shortest path between two points using a*."""
+    # finds the shortest path between two points using a-star search algorithm
     neighbors = [(0, 1, "KEY_DOWN"), (0, -1, "KEY_UP"), (1, 0, "KEY_RIGHT"), (-1, 0, "KEY_LEFT")]
     close_set = set()
     came_from = {}
@@ -48,7 +48,6 @@ def find_path(start: Tuple[int, int], end: Tuple[int, int], obstacles: Set[Tuple
 
 
 def get_next_direction(game: GameState) -> Optional[str]:
-    """determines the next direction for the snake to move."""
     obstacles = set(game.snake)
     path_to_fruit = find_path(game.snake[0], game.fruit, obstacles, game.term_width, game.term_height)
 
