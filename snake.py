@@ -116,7 +116,7 @@ def main():
     if args.cli:
         total_score = 0
         for _ in range(args.runs):
-            term_width = 50
+            term_width = 20
             term_height = 20
             snake = tuple((term_width // 2 - i, term_height // 2) for i in range(3))
             all_cells = set((x, y) for x in range(1, term_width - 1) for y in range(1, term_height - 1))
@@ -126,7 +126,8 @@ def main():
             final_game_state = cli_game_loop(initial_game_state)
             total_score += final_game_state.score
             max_size = (term_width - 2) * (term_height - 2)
-        print(f"Average score: {total_score / args.runs}")
+        max_score = (term_width - 2) * (term_height - 2) - 3
+        print(f"Average score: {total_score / args.runs}/{float(max_score)}")
         exit(0)
 
     term = blessed.Terminal()
