@@ -10,5 +10,5 @@ created in collaboration with @pinouchon from tufalabs.ai.
 
 usage:
 
-   $ uv run src/snake.py --cli --runs 5`
+   $ uv run src/snake.py --cli --runs 20
    $ uv run --with pytest pytest test

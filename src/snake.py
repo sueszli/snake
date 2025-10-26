@@ -139,10 +139,8 @@ def main():
             final_game_state, steps = cli_game_loop(initial_game_state)
             total_score += final_game_state.score
             total_steps += steps
-            assert avg_score == max_score, f"incorrect solution: only got {final_game_state.score}/{max_score}"
-        avg_score = total_score / args.runs
-        print(f"Average score: {avg_score}/{max_score}")
-        print(f"Average steps: {total_steps / args.runs}")
+            assert final_game_state.score == max_score, f"incorrect solution: only got {final_game_state.score}/{max_score}"
+        print(f"average steps: {total_steps / args.runs}")
         exit(0)
 
     # graphical mode for debugging
