@@ -4,10 +4,10 @@
 #     "blessed==1.20.0",
 # ]
 # ///
+import heapq
 import random
 import sys
 import time
-import heapq
 
 import blessed
 
@@ -130,32 +130,39 @@ def game_loop(term, game):
                     head = game["snake"][0]
                     x, y = head
                     direction = game["direction"]
-                    
+
                     # Check if the next move is an obstacle
                     next_x, next_y = x, y
-                    if direction == "KEY_LEFT": next_x -= 1
-                    elif direction == "KEY_RIGHT": next_x += 1
-                    elif direction == "KEY_UP": next_y -= 1
-                    elif direction == "KEY_DOWN": next_y += 1
+                    if direction == "KEY_LEFT":
+                        next_x -= 1
+                    elif direction == "KEY_RIGHT":
+                        next_x += 1
+                    elif direction == "KEY_UP":
+                        next_y -= 1
+                    elif direction == "KEY_DOWN":
+                        next_y += 1
 
                     if (next_x, next_y) in obstacles or not (1 <= next_x < term.width - 1 and 1 <= next_y < term.height - 1):
                         # Try to find a valid move
                         for new_direction in ["KEY_UP", "KEY_DOWN", "KEY_LEFT", "KEY_RIGHT"]:
                             game["direction"] = new_direction
                             next_x, next_y = x, y
-                            if new_direction == "KEY_LEFT": next_x -= 1
-                            elif new_direction == "KEY_RIGHT": next_x += 1
-                            elif new_direction == "KEY_UP": next_y -= 1
-                            elif new_direction == "KEY_DOWN": next_y += 1
-                            
+                            if new_direction == "KEY_LEFT":
+                                next_x -= 1
+                            elif new_direction == "KEY_RIGHT":
+                                next_x += 1
+                            elif new_direction == "KEY_UP":
+                                next_y -= 1
+                            elif new_direction == "KEY_DOWN":
+                                next_y += 1
+
                             if (next_x, next_y) not in obstacles and (1 <= next_x < term.width - 1 and 1 <= next_y < term.height - 1):
                                 break
                         else:
                             # No valid move, game over
                             return game
-                    
-                    path = [game["direction"]]
 
+                    path = [game["direction"]]
 
             if path:
                 game["direction"] = path.pop(0)
