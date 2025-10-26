@@ -10,8 +10,3 @@ class GameState:
     score: int
     term_width: int
     term_height: int
-
-
-def heuristic(a: Tuple[int, int], b: Tuple[int, int]) -> int:
-    # calculates the manhattan distance between two points
-    return abs(a[0] - b[0]) + abs(a[1] - b[1])

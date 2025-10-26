@@ -42,6 +42,8 @@ def update_game_state(game: GameState) -> Optional[GameState]:
         new_score = game.score + 1
         all_cells = set((x, y) for x in range(1, game.term_width - 1) for y in range(1, game.term_height - 1))
         valid_fruit_cells = all_cells - set(new_snake)
+        if not valid_fruit_cells:
+            return GameState(tuple(new_snake), new_head, direction, new_score, game.term_width, game.term_height)
         new_fruit = random.choice(list(valid_fruit_cells))
 
         return GameState(tuple(new_snake), new_fruit, direction, new_score, game.term_width, game.term_height)
@@ -84,9 +86,24 @@ def game_loop(term: blessed.Terminal, initial_game_state: GameState):
 def cli_game_loop(initial_game_state: GameState):
     game = initial_game_state
     last_game_state = initial_game_state
+    steps_since_last_fruit = 0
+
     while game:
         last_game_state = game
+        prev_score = game.score
         game = update_game_state(game)
+
+        if not game:
+            break
+
+        if game.score > prev_score:
+            steps_since_last_fruit = 0
+        else:
+            steps_since_last_fruit += 1
+
+        live_lock = steps_since_last_fruit > (initial_game_state.term_width - 2) * (initial_game_state.term_height - 2) * 2
+        if live_lock:
+            break
     return last_game_state
 
 
@@ -108,6 +125,7 @@ def main():
             initial_game_state = GameState(snake=snake, fruit=fruit, direction="KEY_RIGHT", score=0, term_width=term_width, term_height=term_height)
             final_game_state = cli_game_loop(initial_game_state)
             total_score += final_game_state.score
+            max_size = (term_width - 2) * (term_height - 2)
         print(f"Average score: {total_score / args.runs}")
         exit(0)
 
@@ -120,7 +138,11 @@ def main():
     final_game_state = game_loop(term, initial_game_state)
     print(term.home + term.clear)
     score = final_game_state.score
-    msg = f"Game Over! Score: {score}"
+    max_size = (final_game_state.term_width - 2) * (final_game_state.term_height - 2)
+    if len(final_game_state.snake) >= max_size:
+        msg = "You won!"
+    else:
+        msg = f"Game Over! Score: {score}"
     print(term.move_xy(term.width // 2 - len(msg) // 2, term.height // 2) + msg)
 
 
