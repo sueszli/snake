@@ -3,28 +3,16 @@ from typing import Optional
 from state import GameState
 
 
-def get_next_direction(game: GameState) -> Optional[str]:
-    return hamiltonian_cycle(game)
-
-
 def hamiltonian_cycle(game: GameState) -> Optional[str]:
-    """
-    a solver that follows a pre-defined hamiltonian cycle on the grid.
-    this ensures the snake covers all cells without collision, running
-    perpetually until it fills the entire board.
-    the algorithm is designed for a grid with an even width.
-    """
+    # the most simple algorithm
+    # a pre-defined hamiltonian cycle on the grid.
     head_x, head_y = game.snake[0]
     direction = game.direction
     width = game.term_width - 2
     height = game.term_height - 2
 
-    # this algorithm for a hamiltonian cycle requires the grid width to be even.
-    if width % 2 != 0:
-        # fallback for odd width grids. a different algorithm would be needed.
-        return "KEY_RIGHT"
+    assert width % 2 == 0, "Width must be even for this hamiltonian cycle."
 
-    # determine the target direction based on the hamiltonian cycle path.
     target_direction = None
     if head_y == 1:
         if head_x > 1:
@@ -60,3 +48,7 @@ def hamiltonian_cycle(game: GameState) -> Optional[str]:
             return "KEY_UP"
 
     return target_direction
+
+
+def get_next_direction(game: GameState) -> Optional[str]:
+    return hamiltonian_cycle(game)
