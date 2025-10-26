@@ -1,1 +1,7 @@
+implement a snake game with a terminal user interface in python
 
+do not resize based on the terminal state but capture the terminal size initially
+
+the snake should be controlled with the arrow keys
+
+avoid redundant dependencies
