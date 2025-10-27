@@ -13,3 +13,13 @@ usage:
    $ uv run src/snake.py
    $ uv run src/snake.py --cli --runs 5
    $ uv run --with pytest pytest test
+
+example output of the solver playing the game:
+  
+  ┌Score: 9────────────────────┐
+  │███████████                 │
+  │█                           │
+  │                            │
+  │                            │
+  │     ó                      │
+  └────────────────────────────┘
