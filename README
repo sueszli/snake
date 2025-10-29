@@ -1,6 +1,3 @@
-a tiny benchmarking suite for the classic snake game.
-created in collaboration with @pinouchon from tufalabs.ai.
-
              ____
             / . .\
             \  ---<
@@ -8,13 +5,17 @@ created in collaboration with @pinouchon from tufalabs.ai.
    __________/ /
 -=:___________/
 
+a tiny benchmarking suite for the classic snake game.
+created in collaboration with @pinouchon from tufalabs.ai.
+can you beat my high score?
+
 usage:
 
    $ uv run src/snake.py
    $ uv run src/snake.py --cli --runs 5
    $ uv run --with pytest pytest test
 
-example output of the solver playing the game:
+example output (live play feed from solver):
     
   ┌Score: 9────────────────────┐
   │███████████                 │
