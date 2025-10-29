@@ -131,8 +131,8 @@ def main():
     if args.cli:
         total_score = 0
         total_steps = 0
-        term_width = 20
-        term_height = 20
+        term_width = 10
+        term_height = 10
         max_score = float((term_width - 2) * (term_height - 2) - 3)
         for _ in range(args.runs):
             initial_game_state = init_game_state(term_width, term_height)

@@ -4,7 +4,6 @@ from typing import Dict, Optional, Sequence, Tuple
 from state import GameState
 from utils import a_star_search, count_reachable_cells
 
-
 DIRECTION_VECTORS: Dict[str, Tuple[int, int]] = {
     "KEY_UP": (0, -1),
     "KEY_DOWN": (0, 1),
@@ -76,14 +75,14 @@ def _direction_from_path(path: Tuple[Tuple[int, int], ...]) -> Optional[str]:
 
 
 def _has_escape_route(game: GameState) -> bool:
-    """Return True if the snake can keep moving safely from the given state."""
+    # return True if the snake can keep moving safely from the given state
 
-    # Ensure that the snake will still be able to reach its tail after the move.
+    # ensure that the snake will still be able to reach its tail after the move.
     path_to_tail = a_star_search(game, game.snake[0], game.snake[-1])
     if path_to_tail is not None:
         return True
 
-    # Fall back to checking the size of the accessible region to avoid dead ends.
+    # fall back to checking the size of the accessible region to avoid dead ends.
     reachable = count_reachable_cells(game, game.snake[0])
     return reachable > 0
 
@@ -153,7 +152,7 @@ def _hamilton_rule(x: int, y: int, direction: str, width: int, height: int) -> s
 
 @lru_cache(maxsize=None)
 def _hamilton_successor_map(width: int, height: int) -> Dict[Tuple[int, int], Tuple[int, int]]:
-    assert width % 2 == 0, "Width must be even for this Hamiltonian cycle."
+    assert width % 2 == 0, "width must be even for this Hamiltonian cycle."
 
     successors: Dict[Tuple[int, int], Tuple[int, int]] = {}
     x, y = width, 1
