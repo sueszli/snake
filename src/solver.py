@@ -4,6 +4,7 @@ from typing import Dict, Optional, Sequence, Tuple
 from state import GameState
 from utils import a_star_search, count_reachable_cells
 
+
 DIRECTION_VECTORS: Dict[str, Tuple[int, int]] = {
     "KEY_UP": (0, -1),
     "KEY_DOWN": (0, 1),
